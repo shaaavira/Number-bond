@@ -3,361 +3,375 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Petualangan Number Bond Ratusan</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <title>Petualangan Number Bond Ratusan!</title>
+    <!-- Memuat Font Lucu dari Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Quicksand:wght@600;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Fredoka', sans-serif; }
-        .bubble-bg {
-            background-color: #f0f9ff;
-            background-image: radial-gradient(#bae6fd 1.5px, transparent 1.5px), radial-gradient(#bae6fd 1.5px, #f0f9ff 1.5px);
-            background-size: 60px 60px;
-            background-position: 0 0, 30px 30px;
+        * {
+            box-sizing: border-box;
+            user-select: none;
         }
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); }
+
+        body {
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            font-family: 'Quicksand', sans-serif;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
         }
-        .animate-float { animation: float 3s ease-in-out infinite; }
+
+        .game-container {
+            background: white;
+            padding: 30px;
+            border-radius: 30px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 550px;
+            text-align: center;
+            border: 5px solid #ff7675;
+            position: relative;
+            overflow: hidden;
+        }
+
+        h1 {
+            font-family: 'Fredoka One', cursive;
+            color: #d63031;
+            font-size: 28px;
+            margin-bottom: 5px;
+            text-shadow: 2px 2px 0px #ffeaa7;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: #636e72;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            background: #ffeaa7;
+            padding: 10px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            font-weight: 700;
+            color: #d35400;
+            font-size: 16px;
+        }
+
+        /* Number Bond Visual (Pohon Angka) */
+        .bond-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .circle {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Fredoka One', cursive;
+            font-size: 26px;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Lingkaran Atas (Total/Hasil) */
+        .top-circle {
+            background: #ff7675;
+            color: white;
+            border: 4px dashed #fab1a0;
+            margin-bottom: 20px;
+        }
+
+        .branch-lines {
+            width: 200px;
+            height: 30px;
+            position: relative;
+            margin-bottom: 10px;
+        }
+
+        .branch-lines::before, .branch-lines::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 2px;
+            height: 35px;
+            background-color: #b2bec3;
+        }
+
+        .branch-lines::before {
+            left: 30px;
+            transform: rotate(-35deg);
+        }
+
+        .branch-lines::after {
+            right: 30px;
+            transform: rotate(35deg);
+        }
+
+        .bottom-circles {
+            display: flex;
+            justify-content: space-between;
+            width: 280px;
+        }
+
+        /* Lingkaran Bawah (Bagian-bagian) */
+        .part-circle {
+            background: #74b9ff;
+            color: white;
+            border: 4px dashed #81ecec;
+        }
+
+        .part-circle.input-box-wrapper {
+            background: #dfe6e9;
+            border: 4px solid #b2bec3;
+        }
+
+        .part-circle input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: transparent;
+            text-align: center;
+            font-family: 'Fredoka One', cursive;
+            font-size: 24px;
+            color: #2d3436;
+            outline: none;
+            border-radius: 50%;
+        }
+
+        /* Kontrol Input & Tombol */
+        .input-section {
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            background-color: #00b894;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-family: 'Fredoka One', cursive;
+            font-size: 18px;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #00a884;
+            transition: all 0.1s ease;
+        }
+
+        .btn:active {
+            transform: translateY(4px);
+            box-shadow: 0 1px 0 #00a884;
+        }
+
+        /* Feedback Pesan */
+        #feedback {
+            font-family: 'Fredoka One', cursive;
+            font-size: 20px;
+            margin-top: 15px;
+            min-height: 30px;
+        }
+
+        .correct { color: #00b894; }
+        .wrong { color: #d63031; }
+
+        /* Tampilan Selesai / Game Over */
+        .hidden {
+            display: none !important;
+        }
+
+        .modal {
+            animation: bounceIn 0.5s ease;
+        }
+
+        @keyframes bounceIn {
+            0% { transform: scale(0.3); opacity: 0; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(1); }
+        }
+
+        .mascot {
+            font-size: 40px;
+            margin-bottom: 5px;
+        }
     </style>
 </head>
-<body class="bubble-bg min-h-screen text-slate-800 flex flex-col justify-between">
+<body>
 
-    <!-- Header -->
-    <header class="bg-white/80 backdrop-blur-md shadow-sm py-4 px-6 sticky top-0 z-50">
-        <div class="max-w-4xl mx-auto flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 bg-indigo-600 rounded-2xl flex items-center justify-center text-white font-bold text-xl shadow-md">🧩</div>
-                <h1 class="text-xl font-bold text-indigo-900">Number Bond Ratusan<span class="text-xs ml-2 bg-indigo-100 text-indigo-700 py-1 px-2 rounded-full hidden sm:inline-block">Kelas 5 SD</span></h1>
-            </div>
-            <div id="stats-bar" class="hidden flex items-center space-x-4 text-sm font-semibold">
-                <div class="bg-amber-100 text-amber-800 px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-sm">
-                    ⭐ <span id="score-display">0</span> Poin
-                </div>
-                <div class="bg-rose-100 text-rose-800 px-3 py-1.5 rounded-xl flex items-center gap-1.5 shadow-sm">
-                    ⏳ <span id="timer-display">60</span>s
-                </div>
-            </div>
-        </div>
-    </header>
+    <div class="game-container">
+        <!-- Halaman Bermain -->
+        <div id="game-screen">
+            <div class="mascot">🚀🦊</div>
+            <h1>Number Bond Ratusan</h1>
+            <div class="subtitle">Tentukan angka yang hilang pada pohon angka! (Kelas 5)</div>
 
-    <!-- Main Container -->
-    <main class="flex-1 max-w-2xl w-full mx-auto p-4 sm:p-6 flex flex-col justify-center items-center">
-
-        <!-- Screen: Welcome -->
-        <div id="screen-welcome" class="w-full bg-white rounded-3xl shadow-xl p-6 sm:p-8 text-center animate-float border-4 border-indigo-100">
-            <div class="text-6xl mb-4">🧙‍♂️✨</div>
-            <h2 class="text-2xl sm:text-3xl font-bold text-indigo-900 mb-3">Misi Rahasia Number Bond!</h2>
-            <p class="text-slate-600 mb-6 text-sm sm:text-base leading-relaxed">
-                Halo Pahlawan Matematika Kelas 5! Bantu isi bagian rantai angka ratusan yang hilang menggunakan logika penjumlahan dan pengurangan tercepatmu!
-            </p>
-            <div class="bg-amber-50 border-2 border-amber-200 rounded-2xl p-4 mb-6 text-left text-xs sm:text-sm text-amber-900">
-                <p class="font-bold mb-1">💡 Panduan Cepat:</p>
-                <p>• Angka Atas (Total) = Bagian Kiri + Bagian Kanan</p>
-                <p>• Bagian Kiri/Kanan = Angka Atas - Bagian Lainnya</p>
-            </div>
-            <button onclick="startGame()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-4 rounded-2xl shadow-lg transition-all transform active:scale-95 text-lg">
-                Mulai Petualangan 🚀
-            </button>
-        </div>
-
-        <!-- Screen: Game Playing -->
-        <div id="screen-game" class="hidden w-full flex flex-col items-center">
-            <!-- Progress Bar -->
-            <div class="w-full bg-slate-200 rounded-full h-3 mb-6 overflow-hidden shadow-inner">
-                <div id="progress-bar" class="bg-indigo-600 h-full transition-all duration-300" style="width: 0%"></div>
+            <div class="stats-bar">
+                <span id="score-text">Skor: 0</span>
+                <span id="level-text">Soal: 1 / 10</span>
             </div>
 
-            <!-- Number Bond Graphic Canvas/DOM -->
-            <div class="w-full bg-white rounded-3xl shadow-xl p-6 sm:p-8 relative border-4 border-indigo-50 mb-6 flex flex-col items-center">
-                <span id="question-counter" class="absolute top-4 left-4 bg-slate-100 text-slate-600 text-xs font-bold px-3 py-1 rounded-full">Soal 1/10</span>
-                <span id="target-mode" class="absolute top-4 right-4 bg-indigo-50 text-indigo-600 text-xs font-bold px-3 py-1 rounded-full">Isi Bagian Hilang</span>
+            <!-- Pohon Number Bond -->
+            <div class="bond-container">
+                <!-- Total Atas -->
+                <div id="top-val" class="circle top-circle">500</div>
+                
+                <div class="branch-lines"></div>
 
-                <!-- Diagram Number Bond -->
-                <div class="my-6 w-full max-w-xs flex flex-col items-center relative">
-                    <!-- Top Node -->
-                    <div id="node-top" class="w-24 h-24 sm:w-28 sm:h-28 rounded-full bg-indigo-600 text-white flex flex-col items-center justify-center shadow-lg border-4 border-white transition-all">
-                        <span class="text-xs opacity-80 uppercase tracking-wider font-semibold">Total</span>
-                        <span id="val-top" class="text-2xl sm:text-3xl font-bold">---</span>
-                    </div>
-
-                    <!-- Connectors Line Mock -->
-                    <div class="flex justify-between w-36 sm:w-44 my-[-8px] z-0">
-                        <div class="w-1 h-8 bg-indigo-300 rotate-[-30deg] origin-top"></div>
-                        <div class="w-1 h-8 bg-indigo-300 rotate-[30deg] origin-top"></div>
-                    </div>
-
-                    <!-- Bottom Nodes -->
-                    <div class="flex justify-between w-48 sm:w-56 z-10">
-                        <div id="node-left" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-emerald-500 text-white flex flex-col items-center justify-center shadow-lg border-4 border-white transition-all">
-                            <span class="text-[10px] opacity-80 uppercase tracking-wider font-semibold">Bagian A</span>
-                            <span id="val-left" class="text-xl sm:text-2xl font-bold">---</span>
-                        </div>
-                        <div id="node-right" class="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-amber-500 text-white flex flex-col items-center justify-center shadow-lg border-4 border-white transition-all">
-                            <span class="text-[10px] opacity-80 uppercase tracking-wider font-semibold">Bagian B</span>
-                            <span id="val-right" class="text-xl sm:text-2xl font-bold">---</span>
-                        </div>
+                <!-- Bagian Bawah -->
+                <div class="bottom-circles">
+                    <div id="left-val" class="circle part-circle">200</div>
+                    <div id="right-val" class="circle part-circle input-box-wrapper">
+                        <input type="number" id="user-input" placeholder="?" autocomplete="off">
                     </div>
                 </div>
-
-                <!-- Answer Options Grid -->
-                <div id="options-container" class="grid grid-cols-2 gap-3 w-full max-w-md mt-4">
-                    <!-- Dynamic Options -->
-                </div>
             </div>
+
+            <div class="input-section">
+                <button class="btn" id="submit-btn" onclick="cekJawaban()">Periksa! ✨</button>
+            </div>
+
+            <div id="feedback"></div>
         </div>
 
-        <!-- Screen: Result -->
-        <div id="screen-result" class="hidden w-full bg-white rounded-3xl shadow-xl p-6 sm:p-8 text-center border-4 border-indigo-100">
-            <div id="result-icon" class="text-6xl mb-3">🏆</div>
-            <h2 id="result-title" class="text-2xl sm:text-3xl font-bold text-indigo-900 mb-2">Luar Biasa!</h2>
-            <p id="result-subtitle" class="text-slate-600 mb-6 text-sm">Kamu berhasil menaklukkan tantangan ratusan!</p>
-            
-            <div class="bg-indigo-50 rounded-2xl p-4 mb-6 flex justify-around">
-                <div>
-                    <p class="text-xs text-slate-500 uppercase font-bold">Skor Akhir</p>
-                    <p id="final-score" class="text-3xl font-bold text-indigo-600">0</p>
-                </div>
-                <div>
-                    <p class="text-xs text-slate-500 uppercase font-bold">Jawaban Benar</p>
-                    <p id="final-correct" class="text-3xl font-bold text-emerald-600">0/10</p>
-                </div>
-            </div>
-
-            <div class="flex gap-3">
-                <button onclick="startGame()" class="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-2xl shadow-lg transition-all">
-                    Main Lagi 🔄
-                </button>
-                <button onclick="resetToHome()" class="flex-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3.5 rounded-2xl transition-all">
-                    Menu Utama 🏠
-                </button>
-            </div>
+        <!-- Halaman Hasil Akhir -->
+        <div id="result-screen" class="hidden modal">
+            <div class="mascot">🏆🎉</div>
+            <h1>Hebat Sekali!</h1>
+            <p class="subtitle">Kamu telah menyelesaikan petualangan Number Bond!</p>
+            <h2 id="final-score" style="font-family: 'Fredoka One'; color: #00b894; font-size: 36px; margin: 20px 0;">Skor Akhir: 100</h2>
+            <button class="btn" onclick="mulaiGame()">Main Lagi 🔄</button>
         </div>
+    </div>
 
-    </main>
-
-    <!-- Footer -->
-    <footer class="text-center py-4 text-xs text-slate-400">
-        Game edukasi interaktif matematika kelas 5 SD
-    </footer>
-
-    <!-- Script Game Logic -->
     <script>
-        let currentQuestion = 0;
-        let score = 0;
-        let correctCount = 0;
-        let timer = 60;
-        let timerInterval = null;
-        let activeQuestionData = null;
-        const totalQuestions = 10;
-        let canAnswer = true;
+        let skor = 0;
+        let soalKe = 1;
+        let totalSoal = 10;
+        let jawabanBenar = 0;
+        let posisiKosong = 0; // 0 = kanan, 1 = kiri, 2 = atas
 
-        const screens = {
-            welcome: document.getElementById('screen-welcome'),
-            game: document.getElementById('screen-game'),
-            result: document.getElementById('screen-result')
-        };
+        const topValEl = document.getElementById('top-val');
+        const leftValEl = document.getElementById('left-val');
+        const rightValEl = document.getElementById('right-val');
+        const userInput = document.getElementById('user-input');
+        const feedbackEl = document.getElementById('feedback');
+        const scoreText = document.getElementById('score-text');
+        const levelText = document.getElementById('level-text');
+        
+        const gameScreen = document.getElementById('game-screen');
+        const resultScreen = document.getElementById('result-screen');
+        const finalScore = document.getElementById('final-score');
 
-        function switchScreen(screenName) {
-            Object.keys(screens).forEach(key => {
-                if (key === screenName) {
-                    screens[key].classList.remove('hidden');
-                } else {
-                    screens[key].classList.add('hidden');
+        function mulaiGame() {
+            skor = 0;
+            soalKe = 1;
+            gameScreen.classList.remove('hidden');
+            resultScreen.classList.add('hidden');
+            buatSoalBaru();
+        }
+
+        function buatSoalBaru() {
+            userInput.value = '';
+            feedbackEl.innerHTML = '';
+            userInput.disabled = false;
+            document.getElementById('submit-btn').style.display = 'inline-block';
+            
+            scoreText.innerText = `Skor: ${skor}`;
+            levelText.innerText = `Soal: ${soalKe} / ${totalSoal}`;
+
+            // Buat angka ratusan acak (kelipatan 10 atau 25 agar pas untuk kelas 5, misal 100 - 900)
+            // Bagian A dan B dipilih acak
+            let bagianA = Math.floor(Math.random() * 7 + 1) * 50 + 100; // antara 150 - 500
+            let bagianB = Math.floor(Math.random() * 7 + 1) * 50 + 50;   // antara 100 - 400
+            let total = bagianA + bagianB;
+
+            // Tentukan bagian mana yang ditutup (?) -> 0: Kanan, 1: Kiri, 2: Atas
+            posisiKosong = Math.floor(Math.random() * 3);
+
+            // Reset HTML element wrappers
+            leftValEl.className = "circle part-circle";
+            rightValEl.className = "circle part-circle";
+            topValEl.className = "circle top-circle";
+
+            if (posisiKosong === 2) {
+                // Atas kosong (Penjumlahan Ratusan)
+                topValEl.className = "circle top-circle input-box-wrapper";
+                topValEl.innerHTML = '<input type="number" id="user-input" placeholder="?" autocomplete="off">';
+                
+                leftValEl.innerText = bagianA;
+                rightValEl.innerText = bagianB;
+                jawabanBenar = total;
+            } else if (posisiKosong === 1) {
+                // Kiri kosong (Pengurangan Ratusan)
+                leftValEl.className = "circle part-circle input-box-wrapper";
+                leftValEl.innerHTML = '<input type="number" id="user-input" placeholder="?" autocomplete="off">';
+                
+                topValEl.innerText = total;
+                rightValEl.innerText = bagianB;
+                jawabanBenar = bagianA;
+            } else {
+                // Kanan kosong (Pengurangan Ratusan)
+                rightValEl.className = "circle part-circle input-box-wrapper";
+                rightValEl.innerHTML = '<input type="number" id="user-input" placeholder="?" autocomplete="off">';
+                
+                topValEl.innerText = total;
+                leftValEl.innerText = bagianA;
+                jawabanBenar = bagianB;
+            }
+
+            // Re-assign variabel input karena elemennya baru dibuat ulang
+            const activeInput = document.querySelector('.input-box-wrapper input');
+            activeInput.focus();
+            
+            // Tambahkan event listener untuk tombol Enter
+            activeInput.addEventListener("keypress", function(event) {
+                if (event.key === "Enter") {
+                    cekJawaban();
                 }
             });
-            if(screenName === 'game') {
-                document.getElementById('stats-bar').classList.remove('hidden');
-            } else {
-                document.getElementById('stats-bar').classList.add('hidden');
-            }
         }
 
-        function resetToHome() {
-            clearInterval(timerInterval);
-            switchScreen('welcome');
-        }
+        function cekJawaban() {
+            const activeInput = document.querySelector('.input-box-wrapper input');
+            const jawabanUser = parseInt(activeInput.value);
 
-        function startGame() {
-            currentQuestion = 0;
-            score = 0;
-            correctCount = 0;
-            timer = 60;
-            document.getElementById('score-display').textContent = score;
-            document.getElementById('timer-display').textContent = timer;
-            
-            switchScreen('game');
-            clearInterval(timerInterval);
-            timerInterval = setInterval(() => {
-                timer--;
-                document.getElementById('timer-display').textContent = timer;
-                if (timer <= 0) {
-                    clearInterval(timerInterval);
-                    endGame();
-                }
-            }, 1000);
-
-            nextQuestion();
-        }
-
-        function generateHundredNumberBond() {
-            // Randomly choose sum between 200 and 950 (hundreds range)
-            const top = Math.floor(Math.random() * 15 + 2) * 50; // Multiple of 50 or random hundreds
-            // Let's make it more flexible: random 3 digit numbers (e.g., 150 to 980)
-            const actualTop = Math.floor(Math.random() * 800) + 150;
-            
-            // Choose left part
-            const left = Math.floor(Math.random() * (actualTop - 50)) + 20;
-            const right = actualTop - left;
-
-            // Choose which node to hide: 'top', 'left', or 'right'
-            const missingTypes = ['top', 'left', 'right'];
-            const missing = missingTypes[Math.floor(Math.random() * missingTypes.length)];
-
-            let missingVal = (missing === 'top') ? actualTop : (missing === 'left' ? left : right);
-
-            return {
-                top: actualTop,
-                left: left,
-                right: right,
-                missing: missing,
-                answer: missingVal
-            };
-        }
-
-        function nextQuestion() {
-            if (currentQuestion >= totalQuestions) {
-                clearInterval(timerInterval);
-                endGame();
+            if (isNaN(jawabanUser)) {
+                feedbackEl.innerHTML = "<span class='wrong'>Masukkan angka dulu ya! 🤔</span>";
                 return;
             }
 
-            currentQuestion++;
-            canAnswer = true;
-            document.getElementById('question-counter').textContent = `Soal ${currentQuestion}/${totalQuestions}`;
-            document.getElementById('progress-bar').style.width = `${(currentQuestion / totalQuestions) * 100}%`;
+            activeInput.disabled = true;
+            document.getElementById('submit-btn').style.display = 'none';
 
-            activeQuestionData = generateHundredNumberBond();
-
-            // Display values or '?'
-            const valTop = document.getElementById('val-top');
-            const valLeft = document.getElementById('val-left');
-            const valRight = document.getElementById('val-right');
-            const nodeTop = document.getElementById('node-top');
-            const nodeLeft = document.getElementById('node-left');
-            const nodeRight = document.getElementById('node-right');
-
-            // Reset node highlights
-            [nodeTop, nodeLeft, nodeRight].forEach(n => {
-                n.classList.remove('ring-4', 'ring-rose-400', 'scale-105');
-            });
-
-            if (activeQuestionData.missing === 'top') {
-                valTop.textContent = '?';
-                nodeTop.classList.add('ring-4', 'ring-rose-400', 'scale-105');
-                valLeft.textContent = activeQuestionData.left;
-                valRight.textContent = activeQuestionData.right;
-                document.getElementById('target-mode').textContent = 'Cari Total (Penjumlahan)';
-            } else if (activeQuestionData.missing === 'left') {
-                valTop.textContent = activeQuestionData.top;
-                valLeft.textContent = '?';
-                nodeLeft.classList.add('ring-4', 'ring-rose-400', 'scale-105');
-                valRight.textContent = activeQuestionData.right;
-                document.getElementById('target-mode').textContent = 'Cari Bagian (Pengurangan)';
+            if (jawabanUser === jawabanBenar) {
+                skor += 10;
+                feedbackEl.innerHTML = "<span class='correct'>Benar! Luar Biasa! 🎉</span>";
             } else {
-                valTop.textContent = activeQuestionData.top;
-                valLeft.textContent = activeQuestionData.left;
-                valRight.textContent = '?';
-                nodeRight.classList.add('ring-4', 'ring-rose-400', 'scale-105');
-                document.getElementById('target-mode').textContent = 'Cari Bagian (Pengurangan)';
-            }
-
-            generateOptions(activeQuestionData.answer);
-        }
-
-        function generateOptions(correctAnswer) {
-            let options = [correctAnswer];
-            
-            while(options.length < 4) {
-                // Generate realistic distractors around the answer (+/- 10, 50, or random offset)
-                let offset = (Math.random() > 0.5 ? 1 : -1) * (Math.floor(Math.random() * 5) + 1) * 10;
-                let wrong = correctAnswer + offset;
-                
-                // Ensure positive and unique
-                if (wrong > 0 && !options.includes(wrong)) {
-                    options.push(wrong);
-                } else {
-                    let fallback = correctAnswer + Math.floor(Math.random() * 100) + 5;
-                    if (!options.includes(fallback)) options.push(fallback);
-                }
-            }
-
-            // Shuffle options
-            options.sort(() => Math.random() - 0.5);
-
-            const container = document.getElementById('options-container');
-            container.innerHTML = '';
-
-            options.forEach(opt => {
-                const btn = document.createElement('button');
-                btn.className = "bg-white border-2 border-slate-200 hover:border-indigo-500 hover:bg-indigo-50 text-indigo-900 font-bold py-3.5 px-4 rounded-2xl shadow-sm transition-all text-lg transform active:scale-95 cursor-pointer";
-                btn.textContent = opt;
-                btn.onclick = () => selectAnswer(opt, btn, correctAnswer);
-                container.appendChild(btn);
-            });
-        }
-
-        function selectAnswer(selected, btnElement, correctAnswer) {
-            if (!canAnswer) return;
-            canAnswer = false;
-
-            const allButtons = document.querySelectorAll('#options-container button');
-
-            if (selected === correctAnswer) {
-                btnElement.className = "bg-emerald-500 border-2 border-emerald-600 text-white font-bold py-3.5 px-4 rounded-2xl shadow-md text-lg transition-all scale-105";
-                score += 10;
-                correctCount++;
-                document.getElementById('score-display').textContent = score;
-            } else {
-                btnElement.className = "bg-rose-500 border-2 border-rose-600 text-white font-bold py-3.5 px-4 rounded-2xl shadow-md text-lg transition-all";
-                // Highlight correct one
-                allButtons.forEach(b => {
-                    if (parseInt(b.textContent) === correctAnswer) {
-                        b.className = "bg-emerald-500 border-2 border-emerald-600 text-white font-bold py-3.5 px-4 rounded-2xl shadow-md text-lg transition-all";
-                    }
-                });
+                feedbackEl.innerHTML = `<span class='wrong'>Kurang tepat. Jawabannya: ${jawabanBenar} 💡</span>`;
             }
 
             setTimeout(() => {
-                nextQuestion();
-            }, 1000);
+                soalKe++;
+                if (soalKe > totalSoal) {
+                    gameScreen.classList.add('hidden');
+                    resultScreen.classList.remove('hidden');
+                    finalScore.innerText = `Skor Akhir: ${skor}`;
+                } else {
+                    buatSoalBaru();
+                }
+            }, 1800); // Jeda 1.8 detik sebelum soal berikutnya
         }
 
-        function endGame() {
-            switchScreen('result');
-            document.getElementById('final-score').textContent = score;
-            document.getElementById('final-correct').textContent = `${correctCount}/${totalQuestions}`;
-
-            const title = document.getElementById('result-title');
-            const icon = document.getElementById('result-icon');
-            const subtitle = document.getElementById('result-subtitle');
-
-            if (correctCount >= 8) {
-                icon.textContent = "🏆";
-                title.textContent = "Luar Biasa, Jenius Angka!";
-                subtitle.textContent = "Kamu sangat menguasai penjumlahan & pengurangan ratusan!";
-            } else if (correctCount >= 5) {
-                icon.textContent = "⭐";
-                title.textContent = "Kerja Bagus!";
-                subtitle.textContent = "Terus berlatih agar semakin mahir dengan number bond ya!";
-            } else {
-                icon.textContent = "💪";
-                title.textContent = "Tetap Semangat!";
-                subtitle.textContent = "Yuk coba lagi untuk mengasah kemampuan hitungmu!";
-            }
-        }
+        // Jalankan game saat pertama kali dibuka
+        mulaiGame();
     </script>
 </body>
 </html>
-```eof
-
